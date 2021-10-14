@@ -24,29 +24,42 @@
 				<div class="col-md-5 col-lg-4 order-md-last">
 					<h4 class="d-flex justify-content-between align-items-center mb-3">
 						<span class="text-primary">Your cart</span>
-						<span class="badge bg-primary rounded-pill">3</span>
+						<span class="badge bg-primary rounded-pill">
+							{{nombreProduit}}
+						</span>
 					</h4>
 					<ul class="list-group mb-3">
-						{% for ligne in detailPanier %}
+						{% for lignePanier in detailPanier %}
 							<li class="list-group-item d-flex justify-content-between lh-sm">
 								<div>
-									<h6 class="my-0">
-										{{ ligne.produit.designation }}
-									</h6>
+									<div style="display:flex; align-items:center;">
+
+										<img style="width:30px;height:30px; margin-right:5px" src="/uploads/{{ lignePanier.produit.nomImage }}"/>
+
+										<h6 class="my-0">
+
+											{{ lignePanier.produit.designation }}
+
+										</h6>
+
+									</div>
+
 									<small class="text-muted">
 										Quantité :
-										{{ ligne.quantite }}
+										{{ lignePanier.quantite }}
 									</small>
 								</div>
 								<span class="text-muted">
-									{{ ligne.produit.prix * ligne.quantite }}
+									{{ (lignePanier.produit.prix * lignePanier.quantite)|number_format(2, ',', '.') }}
 								</span>
 							</li>
 						{% endfor %}
 
 						<li class="list-group-item d-flex justify-content-between">
 							<span>Total (USD)</span>
-							<strong>$20</strong>
+							<strong>
+								{{(total)|number_format(2, ',', '.')}}€
+							</strong>
 						</li>
 					</ul>
 
