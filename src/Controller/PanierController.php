@@ -30,7 +30,7 @@ class PanierController extends AbstractController
             $total += $produit->getPrix() * $quantite;
 
             $detailPanier[] = [
-                'produit' => $repo->find($idProduit),
+                'produit' => $produit,
                 'quantite' => $quantite,
             ];
         }

@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+
+{% block title %}Administration
+{% endblock %}
+
+
+{% block body %}
+	{% if produit.id == null %}
+		<h1>Création produit</h1>
+	{% else %}
+		<h1>Edition du produit :
+			{{produit.designation}}</h1>
+	{% endif %}
+
+	{{form(vueFormulaire)}}{% endblock %}

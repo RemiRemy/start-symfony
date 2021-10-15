@@ -6,6 +6,8 @@
 
 {% block body %}
 
+	<a class="btn btn-primary" href="{{path('creation_produit')}}">Nouveau Produit</a>
+
 	<table class="table">
 
 		<thead>
@@ -39,7 +41,7 @@
 					<td>{{produit.description}}</td>
 					<td>{{produit.prix}}</td>
 					<td>
-						<a class="btn text-decoration-none badge bg-success">Modifier</a>
+						<a class="btn text-decoration-none badge bg-success" href="{{path('edition_produit', {id:produit.id})}}">Modifier</a>
 						<a class="btn text-decoration-none badge bg-danger" href="{{path('suppression_produit',{id:produit.id})}}">Supprimer</a>
 					</td>
 				</tr>
