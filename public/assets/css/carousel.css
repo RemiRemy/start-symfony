@@ -29,10 +29,12 @@ body {
 
 .carousel-item {
   height: 32rem;
-  background-size: contain;
+  background-size: 90%;
   background-repeat: no-repeat;
   background-position: center;
 }
+
+
 
 .carousel-item>img {
   position: absolute;

@@ -53,20 +53,20 @@ class AppFixtures extends Fixture
         $utilisateur->setEmail("jd@g.com");
         $utilisateur->setPassword($this->hasher->hashPassword($utilisateur, "azerty"));
 
-        $manager->persist($utilisateur);
+        $manager->persist($utilisateur); // prépare la sauvegarde jusqu'au flush
+
 
         // Ajouter slides
-
 
         for ($i = 1; $i < 4; $i++) {
 
 
-            $carousel = new Slide();
+            $slide = new Slide();
 
-            $carousel->setNomImage("header" . $i . ".png")
+            $slide->setNomImage("header" . $i . ".png")
                 ->setTitre($faker->text(10))
                 ->setTexte($faker->text(40));
-            $manager->persist($carousel);
+            $manager->persist($slide);
         }
 
         $manager->flush(); // enregistre tout dans la bdd 

@@ -3,7 +3,9 @@
 namespace App\Controller;
 
 use App\Entity\Produit;
+use App\Entity\Slide;
 use App\Repository\ProduitRepository;
+use App\Repository\SlideRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
@@ -18,12 +20,15 @@ use Symfony\Component\Validator\Constraints\File;
 class AdminController extends AbstractController
 {
     #[Route('/admin', name: 'admin')]
-    public function index(ProduitRepository $repo): Response
+    public function index(ProduitRepository $repo, SlideRepository $repoSlide): Response
     {
         $listeProduit = $repo->findAll();
 
+        $detailSlide = $repoSlide->findAll();
+
         return $this->render('admin/index.html.twig', [
-            'listeProduit' => $listeProduit
+            'listeProduit' => $listeProduit,
+            "detailSlide" => $detailSlide
         ]);
     }
 
@@ -48,6 +53,7 @@ class AdminController extends AbstractController
 
         return $this->redirect('/admin');
     }
+
 
 
     #[Route('/admin/creation-produit', name: 'creation_produit')]
@@ -149,9 +155,131 @@ class AdminController extends AbstractController
 
         $vueFormulaire = $formulaire->createView();
 
+
+
         return $this->render('admin/edition-produit.html.twig', [
             'produit' => $produit,
             'vueFormulaire' => $vueFormulaire
         ]);
+    }
+
+    // ***************************************************************** CAROUSEL *****************************************************************************
+
+
+    #[Route('/admin/creation-carousel', name: 'creation-carousel')]
+    #[Route('/admin/modif-carousel/{id}', name: 'modif-carousel')]
+    public function modifCarousel(Slide $slide = null, Request $request, EntityManagerInterface $manager): Response
+    {
+
+        if ($slide == null) {
+            $slide = new Slide();
+        }
+
+        $formulaire = $this->createFormBuilder($slide)
+            // permet de créer le formulaire pour gagner du temps 
+            ->add(
+                'titre',
+                TextType::class, // on peut mettre null 
+                [
+                    // 'label' => 'Titre',
+                    'attr' => [
+                        'placeholder' => 'Titre Carousel',
+                        'class' => 'form-control', // permet de mettre une classe CSS
+                    ],
+                    'row_attr' => ['class' => 'form-group'],
+                ]
+            )
+            ->add(
+                'texte',
+                TextareaType::class, // on peut mettre null 
+                [
+                    'attr' => [
+                        'placeholder' => 'Slogan du carousel',
+                        'class' => 'form-control', // permet de mettre une classe CSS
+                    ],
+                    'row_attr' => ['class' => 'form-group'],
+                ]
+            )
+
+            ->add(
+                'nomImage',
+                FileType::class,
+                [
+                    'label' => 'Image',
+                    'mapped' => false,
+                    'required' => false,
+                    'attr' => [
+                        'class' => 'form-control', // permet de mettre une classe CSS
+                    ],
+                    'constraints' => [
+                        new File(
+                            [
+                                'mimeTypes' => ['image/jpeg', 'image/png'],
+                                'mimeTypesMessage' => "Format jpg ou png uniquement"
+                            ]
+                        )
+                    ]
+                ]
+            )
+            ->add(
+                'save',
+                SubmitType::class,
+                [
+                    'label' => 'Enregistrer',
+                    'attr' => ['class' => 'btn btn-success']
+                ]
+            )
+            ->getForm();
+
+
+        // On récupère les données de la requête (du formulaire) et on les affectes au formulaire (et donc à $slide)
+        $formulaire->handleRequest($request);
+
+        // uniquement si l'utilisateur a cliqué sur le bouton enregistrer
+        if ($formulaire->isSubmitted() && $formulaire->isValid()) {
+
+            //on récupère l'image qui a été choisi par l'utilisateur
+            $image = $formulaire->get("nomImage")->getData();
+
+            // si l'utilisateur a selectionné un fichier
+            if ($image) {
+                $nomOriginal = pathinfo($image->getClientOriginalName(), PATHINFO_FILENAME);
+
+
+                // $nomUnique = $nomOriginal . "-" . time();
+                $nomUnique = $nomOriginal . "-" . uniqid() . '.' . $image->guessExtension();  // permet de gérer l'extension des photo jpg png ...
+
+                $image->move("uploads", $nomUnique);
+
+                $slide->setNomImage($nomUnique);
+            }
+
+            $manager->persist($slide);
+            $manager->flush();
+            return $this->redirect('/admin');
+        }
+
+        $vueFormulaire = $formulaire->createView();
+
+
+
+        return $this->render('admin/modif-carousel.html.twig', [
+            'slide' => $slide,
+            'vueFormulaire' => $vueFormulaire
+        ]);
+    }
+
+
+
+    #[Route('/admin/suppression-slide/{id}', name: 'suppression_slide')]
+    public function suppressionSlide($id, EntityManagerInterface $manager): Response
+    {
+        // ici on créait un objet slide possédant le bon id afin que le manager comprenne ce qu'il doit supprimer 
+        // (par exemple une ligne de la table slide ayant pour clé primaire "#id")
+        $slide = $manager->getReference('App\\Entity\\Slide', $id);
+        $manager->remove($slide);
+        $manager->flush();
+
+        return $this->redirect('/admin');
     }
 }
