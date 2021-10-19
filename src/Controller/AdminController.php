@@ -40,7 +40,7 @@ class AdminController extends AbstractController
     #[Route('/admin/suppression-produit/{id}', name: 'suppression_produit')]
     public function suppressionProduit($id, EntityManagerInterface $manager): Response
     {
-        // ic on créait un objet produit possédant le bon id afin que le manager comprenne ce qu'il doit supprimer 
+        // ici on créait un objet produit possédant le bon id afin que le manager comprenne ce qu'il doit supprimer 
         // (par exemple une ligne de la table produit ayant pour clé primaire "#id")
         $produit = $manager->getReference('App\\Entity\\Produit', $id);
         $manager->remove($produit);

@@ -4,6 +4,7 @@ namespace App\DataFixtures;
 
 
 use App\Entity\Produit;
+use App\Entity\Slide;
 use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
@@ -54,6 +55,20 @@ class AppFixtures extends Fixture
 
         $manager->persist($utilisateur);
 
-        $manager->flush();
+        // Ajouter slides
+
+
+        for ($i = 1; $i < 4; $i++) {
+
+
+            $carousel = new Slide();
+
+            $carousel->setNomImage("header" . $i . ".png")
+                ->setTitre($faker->text(10))
+                ->setTexte($faker->text(40));
+            $manager->persist($carousel);
+        }
+
+        $manager->flush(); // enregistre tout dans la bdd 
     }
 }
