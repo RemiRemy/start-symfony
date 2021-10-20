@@ -37,6 +37,12 @@ class Produit
      */
     private $nomImage;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=Categorie::class, inversedBy="produits")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $categorie;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -86,6 +92,18 @@ class Produit
     public function setNomImage(?string $nomImage): self
     {
         $this->nomImage = $nomImage;
+
+        return $this;
+    }
+
+    public function getCategorie(): ?Categorie
+    {
+        return $this->categorie;
+    }
+
+    public function setCategorie(?Categorie $categorie): self
+    {
+        $this->categorie = $categorie;
 
         return $this;
     }

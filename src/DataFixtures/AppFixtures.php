@@ -2,7 +2,7 @@
 
 namespace App\DataFixtures;
 
-
+use App\Entity\Categorie;
 use App\Entity\Produit;
 use App\Entity\Slide;
 use App\Entity\User;
@@ -26,13 +26,20 @@ class AppFixtures extends Fixture
 
         $tableauImage = ["cafe1.jpg", "cafe2.jpg", "cafe3.jpg", "cafe4.jpg", "cafe5.jpg", "cafe6.jpg", "cafe7.jpg", "cafe8.jpg", "cafe9.jpg", "cafe10.jpg"];
 
+
+        $categorieCafeEnGrain = new Categorie();
+        $categorieCafeEnGrain->setNom("Café en grain");
+        $manager->persist($categorieCafeEnGrain);
+
+
         for ($i = 0; $i < 10; $i++) {
 
             $produit = new Produit();
             $produit->setDesignation('Café "' . $faker->sentence(3) . '"')
                 ->setDescription($faker->text(100))
                 ->setPrix($faker->randomFloat(2, 5, 10))
-                ->setNomImage($faker->randomElement($tableauImage));
+                ->setNomImage($faker->randomElement($tableauImage))
+                ->setCategorie($categorieCafeEnGrain);
             //->setNomImage($tableauImage[$i]);
 
             $manager->persist($produit);
