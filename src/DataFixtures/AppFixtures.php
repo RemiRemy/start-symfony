@@ -20,8 +20,17 @@ class AppFixtures extends Fixture
         $this->hasher = $hasher;
     }
 
+
+
     public function load(ObjectManager $manager)
     {
+
+        // $manager = (object) $manager;
+        // $manager->getConnection()
+        //     ->executeQuery(
+        //         'ALTER TABLE produit AUTO_INCREMENT=1;ALTER TABLE categorie AUTO_INCREMENT=1;ALTER TABLE slide AUTO_INCREMENT=1;ALTER TABLE user AUTO_INCREMENT=1;'
+        //     );
+
         $faker = Faker\Factory::create();
 
         $tableauImage = ["cafe1.jpg", "cafe2.jpg", "cafe3.jpg", "cafe4.jpg", "cafe5.jpg", "cafe6.jpg", "cafe7.jpg", "cafe8.jpg", "cafe9.jpg", "cafe10.jpg"];
@@ -31,6 +40,20 @@ class AppFixtures extends Fixture
         $categorieCafeEnGrain->setNom("Café en grain");
         $manager->persist($categorieCafeEnGrain);
 
+        $categorieCafeSoluble = new Categorie();
+        $categorieCafeSoluble->setNom("Café soluble");
+        $manager->persist($categorieCafeSoluble);
+
+        $categorieConsommable = new Categorie();
+        $categorieConsommable->setNom("Consommable");
+        $manager->persist($categorieConsommable);
+
+        $listeCategorie = [
+            $categorieCafeEnGrain,
+            $categorieCafeSoluble,
+            $categorieConsommable,
+        ];
+
 
         for ($i = 0; $i < 10; $i++) {
 
@@ -39,7 +62,7 @@ class AppFixtures extends Fixture
                 ->setDescription($faker->text(100))
                 ->setPrix($faker->randomFloat(2, 5, 10))
                 ->setNomImage($faker->randomElement($tableauImage))
-                ->setCategorie($categorieCafeEnGrain);
+                ->setCategorie($faker->randomElement($listeCategorie));
             //->setNomImage($tableauImage[$i]);
 
             $manager->persist($produit);

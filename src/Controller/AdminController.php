@@ -2,11 +2,13 @@
 
 namespace App\Controller;
 
+use App\Entity\Categorie;
 use App\Entity\Produit;
 use App\Entity\Slide;
 use App\Repository\ProduitRepository;
 use App\Repository\SlideRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -19,17 +21,53 @@ use Symfony\Component\Validator\Constraints\File;
 
 class AdminController extends AbstractController
 {
+    #[Route('/admin/produits', name: 'admin_produits')]
     #[Route('/admin', name: 'admin')]
-    public function index(ProduitRepository $repo, SlideRepository $repoSlide): Response
+    public function administrationProduit(ProduitRepository $repo,): Response
     {
         $listeProduit = $repo->findAll();
 
+
+
+        $listeProduitParCatégorie = [];
+
+
+
+        foreach ($listeProduit as $produit) {
+
+            $nomCategorie = $produit->getCategorie()->getNom();
+
+
+
+            if (!isset($listeProduitParCatégorie[$nomCategorie])) {
+
+                $listeProduitParCatégorie[$nomCategorie] = [];
+            }
+
+            $listeProduitParCatégorie[$nomCategorie][] = $produit;
+        }
+
+
+        dump($listeProduitParCatégorie);
+
+        return $this->render('admin/admin-produit.html.twig', [
+            'listeProduitParCategorie' => $listeProduitParCatégorie,
+        ]);
+    }
+
+    #[Route('/admin/slides', name: 'admin_slides')]
+    public function administionSlide(SlideRepository $repoSlide): Response
+    {
         $detailSlide = $repoSlide->findAll();
 
-        return $this->render('admin/index.html.twig', [
-            'listeProduit' => $listeProduit,
-            "detailSlide" => $detailSlide
-        ]);
+        return $this->render('admin/admin-slide.html.twig', ['detailSlide' => $detailSlide]);
+    }
+
+
+    #[Route('/admin/categories', name: 'admin_categories')]
+    public function administionCategorie(): Response
+    {
+        return $this->render('admin/admin-categorie.html.twig');
     }
 
 
@@ -75,9 +113,25 @@ class AdminController extends AbstractController
                         'placeholder' => 'Nom du produit',
                         'class' => 'form-control', // permet de mettre une classe CSS
                     ],
-                    'row_attr' => ['class' => 'form-group'],
+                    'row_attr' => ['class' => 'form-group'], // permet de mettre une classe CSS
                 ]
             )
+            ->add('categorie', EntityType::class, [
+
+                'class' => Categorie::class,
+
+                'choice_label' => 'nom',
+
+                'attr' => [
+
+                    'class' => 'form-control',
+
+                ],
+
+                'row_attr' => ['class' => 'form-group'],
+
+            ])
+
             ->add(
                 'description',
                 TextareaType::class, // on peut mettre null 
@@ -131,7 +185,7 @@ class AdminController extends AbstractController
 
         // uniquement si l'utilisateur a cliqué sur le bouton enregistrer
         if ($formulaire->isSubmitted() && $formulaire->isValid()) {
-
+            // dd($produit);
             //on récupère l'image qui a été choisi par l'utilisateur
             $image = $formulaire->get("nomImage")->getData();
 

@@ -1,0 +1,77 @@
+{% extends 'base-admin.html.twig' %}
+
+{% block title %}Administration
+{% endblock %}
+
+
+{% block body %}
+
+
+{# *************************************************************article produit******************************************************************* #}
+
+<a class="btn btn-primary" href="{{path('creation_produit')}}">Nouveau Produit</a>
+
+<script>
+	function toggleTable(bouton, index) {
+
+bouton.classList.toggle("fa-minus-circle");
+bouton.classList.toggle("fa-plus-circle");
+
+
+const table = document.querySelector('#table-' + index);
+table.classList.toggle("d-none");
+
+}
+</script>
+
+
+{# <?php foreach($listeProduitParCategorie as listeProduit => nomCategorie) #}
+{% for nomCategorie, listeProduit in listeProduitParCategorie %}
+
+	<h2>
+		{{nomCategorie}}
+		<i onclick="toggleTable(this, {{ loop.index }});" style="cursor: pointer" class="fas fa-minus-circle"></i>
+	</h2>
+
+
+	<table id="table-{{loop.index}}" class=" table">
+
+		<thead>
+
+			<tr>
+
+				<th>ID</th>
+
+				<th>Image</th>
+
+				<th>Désignation</th>
+
+				<th>Description</th>
+
+				<th>Prix</th>
+
+				<th>Actions</th>
+
+			</tr>
+
+			{% for produit in listeProduit %}
+			</thead>
+		</thead>
+		<tbody>
+
+
+			<tr>
+				<td>{{produit.id}}</td>
+				<td><img style="width:50px;height:50px" src="/uploads/{{produit.nomImage}}"></td>
+				<td>{{produit.designation}}</td>
+				<td>{{produit.description}}</td>
+				<td>{{produit.prix}}</td>
+				<td>
+					<a class="btn text-decoration-none badge bg-success" href="{{path('edition_produit', {id:produit.id})}}">Modifier</a>
+					<a class="btn text-decoration-none badge bg-danger" href="{{path('suppression_produit',{id:produit.id})}}">Supprimer</a>
+				</td>
+			</tr>
+		{% endfor %}
+	</tbody>
+
+</table>{% endfor %}{% endblock %}
