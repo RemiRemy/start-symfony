@@ -7,12 +7,16 @@
 
 			<ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
 				<li>
-					<a href="{{path('accueil')}}" class="nav-link px-2 link-secondary">Accueil</a>
+					<a href="{{path('accueil')}}" class="nav-link px-2 link-secondary">Liste produits</a>
 				</li>
-				<li>
-					<a href="{{path('admin')}}" class="nav-link px-2 link-dark">admin</a>
+				{# Pour afficher le lien vers admin quand il a le role admin   #}
+				{% if app.user and ('ROLE_ADMIN' in app.user.roles) %}
+					{# permet de ne pas planté si la personne n'est pas connecté #}
+					<li>
+						<a href="{{path('admin')}}" class="nav-link px-2 link-dark">admin</a>
+					</li>
+				{% endif %}
 
-				</li>
 				<li>
 					<a href="#" class="nav-link px-2 link-dark">Customers</a>
 				</li>
@@ -30,6 +34,7 @@
 			</form>
 
 			{% if app.user %}
+				{# si la personne est connecté #}
 				<div class="dropdown text-end">
 					<a href="#" class="d-block link-dark text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
 						<img src="https://github.com/mdo.png" alt="mdo" width="32" height="32" class="rounded-circle">

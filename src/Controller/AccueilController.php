@@ -11,9 +11,11 @@ use Symfony\Component\Routing\Annotation\Route;
 class AccueilController extends AbstractController
 {
     #[Route('/', name: 'accueil')]
-    public function index(ProduitRepository $repo, SlideRepository $repoSlide): Response
-    {
-        $listeProduits = $repo->findAll();
+    public function index(
+        ProduitRepository $repo,
+        SlideRepository $repoSlide
+    ): Response {
+        $listeProduits = $repo->findAllJoinLibelle();
 
         $detailSlide = $repoSlide->findAll();
 
